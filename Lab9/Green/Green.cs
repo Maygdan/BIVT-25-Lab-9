@@ -1,4 +1,7 @@
-﻿namespace Lab9.Green
+﻿using System;
+using System.Linq;
+
+namespace Lab9.Green
 {
     public abstract class Green
     {
@@ -18,10 +21,7 @@
             Review();
         }
     }
-}
 
-namespace Lab9.Green
-{
     public class Task1 : Green
     {
         private (char, double)[] _output;
@@ -39,7 +39,6 @@ namespace Lab9.Green
             string russianAlphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
             string text = Input.ToLower();
 
-            // Знаменатель: количество ВСЕХ букв (любых алфавитов)
             int totalLetters = text.Count(c => char.IsLetter(c));
             if (totalLetters == 0)
             {
@@ -63,12 +62,7 @@ namespace Lab9.Green
             return string.Join("\n", _output.Select(x => $"{x.Item1}:{x.Item2:F4}"));
         }
     }
-}
 
-
-
-namespace Lab9.Green
-{
     public class Task2 : Green
     {
         private char[] _output;
@@ -83,8 +77,6 @@ namespace Lab9.Green
         {
             if (string.IsNullOrEmpty(Input)) return;
 
-            // 1. Определяем разделители (все, что не буквы, не цифры и не спец-символы слова)
-            // Добавляем обычный ' к разрешенным, так как он есть в тексте
             char[] chars = Input.ToCharArray();
             for (int i = 0; i < chars.Length; i++)
             {
@@ -95,7 +87,6 @@ namespace Lab9.Green
             string cleaned = new string(chars);
             string[] tokens = cleaned.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // 2. Фильтруем токены: слово НЕ должно содержать цифр (чтобы исключить 1600s, 16th и т.д.)
             var words = tokens.Where(t => !t.Any(char.IsDigit) && t.Any(char.IsLetter)).ToArray();
 
             if (words.Length == 0)
@@ -104,12 +95,11 @@ namespace Lab9.Green
                 return;
             }
 
-            // 3. Группируем по первой букве
             _output = words
                 .Select(w => char.ToLower(w[0]))
                 .GroupBy(c => c)
-                .OrderByDescending(g => g.Count()) // Сначала по частоте (убывание)
-                .ThenBy(g => g.Key)               // При равенстве - по алфавиту (возрастание)
+                .OrderByDescending(g => g.Count())
+                .ThenBy(g => g.Key)
                 .Select(g => g.Key)
                 .ToArray();
         }
@@ -120,12 +110,7 @@ namespace Lab9.Green
             return string.Join(", ", _output);
         }
     }
-}
 
-
-
-namespace Lab9.Green
-{
     public class Task3 : Green
     {
         private string _pattern;
@@ -140,7 +125,7 @@ namespace Lab9.Green
 
         public override void Review()
         {
-            if (Input == null || _pattern == null || _pattern.Length == 0) return;
+            if (string.IsNullOrEmpty(Input) || string.IsNullOrEmpty(_pattern)) return;
 
             char[] chars = Input.ToCharArray();
             for (int i = 0; i < chars.Length; i++)
@@ -150,25 +135,22 @@ namespace Lab9.Green
             }
 
             string cleaned = new string(chars);
-            string[] words = cleaned.Split(new char[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+            string[] words = cleaned.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             _output = words
-                .Where(w => w.Contains(_pattern, System.StringComparison.OrdinalIgnoreCase))
-                .GroupBy(w => w.ToLower()) // Убираем дубликаты (регистронезависимо)
-                .Select(g => g.First())    // Берем первое вхождение в оригинальном регистре
+                .Where(w => w.Contains(_pattern, StringComparison.OrdinalIgnoreCase))
+                .GroupBy(w => w.ToLower())
+                .Select(g => g.First())
                 .ToArray();
         }
 
         public override string ToString()
         {
             if (_output == null || _output.Length == 0) return string.Empty;
-            return string.Join(System.Environment.NewLine, _output);
+            return string.Join(Environment.NewLine, _output);
         }
     }
-}
- 
-namespace Lab9.Green
-{
+
     public class Task4 : Green
     {
         private string[] _output;
@@ -183,10 +165,9 @@ namespace Lab9.Green
         {
             if (Input == null) return;
 
-            string[] names = Input.Split(new char[] { ',', ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+            string[] names = Input.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (names.Length == 0) return;
 
-            // Ручная сортировка пузырьком (библиотечные методы запрещены)
             for (int i = 0; i < names.Length - 1; i++)
             {
                 for (int j = 0; j < names.Length - i - 1; j++)
@@ -219,7 +200,7 @@ namespace Lab9.Green
         public override string ToString()
         {
             if (_output == null || _output.Length == 0) return string.Empty;
-            return string.Join(System.Environment.NewLine, _output);
+            return string.Join(Environment.NewLine, _output);
         }
     }
 }
